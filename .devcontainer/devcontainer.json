@@ -13,13 +13,6 @@
   //   "context": ".."
   // },
 
-  // Give the container enough resources for SMT solving
-  "hostRequirements": {
-    "cpus": 2,
-    "memory": "4gb",
-    "storage": "32gb"
-  },
-
   // VS Code extensions installed automatically
   "customizations": {
     "vscode": {
