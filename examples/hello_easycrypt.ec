@@ -1,84 +1,62 @@
-(* ======================================================================
-   hello_easycrypt.ec — a minimal EasyCrypt file for getting started
-   ====================================================================== *)
+require import Real Bool DBool.
 
-(* ----- Basic logic -------------------------------------------------------- *)
+type msg.
+type cip.
 
-(* A simple lemma: conjunction is commutative.
-   Try stepping through the proof with Ctrl+Alt+Down (next step)
-   or Ctrl+Alt+Up (undo step). *)
-lemma and_comm (P Q : bool) : P /\ Q => Q /\ P.
-proof.
-  move=> [hp hq].  (* destructure the hypothesis *)
-  split.
-  - exact hq.
-  - exact hp.
-qed.
+(* Encrypt and decrypt operations. *)
+op enc: msg -> cip.
+op dec: cip -> msg.
 
-(* ----- Working with integers ---------------------------------------------- *)
+(* Compute operations for the adversary. *)
+op comp: cip -> bool.
 
-lemma add_comm (x y : int) : x + y = y + x.
-proof. ring. qed.
+module type Challenger = {
+  proc encrypt(m:msg): cip
+  proc decrypt(c:cip): msg
+}.
 
-lemma mul_distr (x y z : int) : x * (y + z) = x * y + x * z.
-proof. ring. qed.
-
-(* ----- A simple module / procedure ---------------------------------------- *)
-
-(* Modules in EasyCrypt model probabilistic programs.
-   This module represents a simple counter. *)
-module Counter = {
-  var count : int
-
-  proc init() : unit = {
-    count <- 0;
+module C:Challenger = {
+  proc encrypt(m:msg): cip = {
+    return enc(m);
   }
-
-  proc increment() : unit = {
-    count <- count + 1;
-  }
-
-  proc get() : int = {
-    return count;
+  proc decrypt(c:cip): msg = {
+    return dec(c);
   }
 }.
 
-(* A Hoare triple: after init(), the counter is 0. *)
-lemma counter_init :
-  hoare [Counter.init : true ==> Counter.count = 0].
-proof.
-  proc.
-  auto.
-qed.
-
-(* After one increment from 0, the counter equals 1. *)
-lemma counter_one :
-  hoare [Counter.increment :
-    Counter.count = 0 ==> Counter.count = 1].
-proof.
-  proc.
-  auto.
-qed.
-
-(* ----- Probabilistic programming ------------------------------------------ *)
-
-require import AllCore Distr.
-
-(* A module that samples a random boolean *)
-module Coin = {
-  proc flip() : bool = {
-    var b : bool;
-    b <$ {0,1};   (* sample uniformly from {false, true} *)
-    return b;
+(* Similarly, we define an adversary *)
+module type Adversary = {
+  proc guess(c:cip): bool
+}.
+(* and a concrete instance of an adversary *)
+module Adv:Adversary = {
+  proc guess(c:cip): bool = {
+    return comp(c);
   }
 }.
 
-(* The output of flip is uniformly distributed — a pRHL statement *)
-lemma coin_uniform :
-  phoare [Coin.flip : true ==> res] = (1%r / 2%r).
+module Game(C:Challenger, Adv:Adversary) = {
+  proc ind_ror(): bool = {
+    var m:msg;
+    var c:cip;
+    var b,b_adv:bool;
+    b <$ {0,1}; (* Sample b uniformly at random *)
+    if(b){
+      (* Set m to be an authentic message *)
+    } else {
+      (* Set m to be a random string *)
+    }
+    c <@ C.encrypt(m);
+    b_adv <@ Adv.guess(c);
+    return (b_adv = b);
+  }
+}.
+
+axiom ind_ror_pr_le1:
+phoare [Game(C,Adv).ind_ror: true ==> res] <= 1%r.
+
+lemma ind_ror_secure:
+phoare [Game(C,Adv).ind_ror: true ==> res]<=(1%r/2%r).
 proof.
-  proc.
-  rnd (fun b => b).
-  auto => />.
-  rewrite DBool.dbool1E //.
+    admit.
 qed.
