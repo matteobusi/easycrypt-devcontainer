@@ -12,12 +12,13 @@ A ready-to-use development environment for EasyCrypt, designed for courses and w
 4. Wait ~30 seconds for the pre-built container image to be pulled (only on first launch; subsequent opens are instant).
 5. Open any `.ec` file in `examples/` and start proving.
 
-> **Warning: delete your codespace when you are done.**
-> Codespaces auto-suspend after 30 minutes of inactivity (pausing compute), but the stopped container keeps consuming your storage quota for up to 30 days before GitHub auto-deletes it. Each codespace takes ~3–4 GB of your 15 GB/month free allowance. Create a few and forget to delete them and you will exhaust your quota.
+> ** 🚨 Warning: delete your codespace when you are done. 🚨 **
+>
+> In the GitHub Codespaces free tier you have 120 hours/month for computing and 15GB/month allowance. Codespaces auto-suspend after 30 minutes of inactivity (pausing compute), but the stopped container keeps consuming your storage quota for up to 30 days before GitHub auto-deletes it. Each codespace about 3–4 GB of your 15 GB/month free allowance. Create a few and forget to delete them and you will exhaust your quota.
 >
 > To delete: go to [github.com/codespaces](https://github.com/codespaces), click `···` next to your codespace, and select **Delete**.
 
-### Option B — Local VS Code with Docker (recommended for regular use)
+### Option B — Local VS Code with Docker (recommended if you have VS Code and Docker installed)
 
 **Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) and the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) VS Code extension.
 
